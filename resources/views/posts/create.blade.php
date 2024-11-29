@@ -16,7 +16,7 @@
                     rows="3"></textarea>
             </div>
             <div class="mb-3">
-                <input name="image" class="form-control" type="file">
+                <input name="image[]" class="form-control" type="file" multiple>
             </div>
             <input type="submit" value="send" class="btn btn-primary">
         </form>

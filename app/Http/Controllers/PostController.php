@@ -26,17 +26,24 @@ class PostController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *     $post = Post::create($request->all());
+
      */
     public function store(Request $request)
     {
         if ($request->hasFile("image")) {
-            $imageName = $request->file("image")->getClientOriginalName() . "-" . time() . $request->file("image")->getClientOriginalExtension();
-            $request->file("image")->move(public_path("/images/posts"), $imageName);
-        }
+            $imageNames = [];
+            foreach ($request->file('image') as $image) {
+            $imageName = $image->getClientOriginalName() . "-" . time() . "." . $image->getClientOriginalExtension();
+            $image->move(public_path("/images/posts"), $imageName);
+            $imageNames[] = $imageName;
+            }
+            $imageNamesString = implode(',', $imageNames);
+    }
         Post::create([
             "title" => $request->title,
             "description" => $request->description,
-            "image" => $imageName
+            "image" => $imageNamesString
         ]);
         return redirect()->route("posts.index");
     }
@@ -63,15 +70,20 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         if ($request->hasFile("image")) {
-            $imageName = $request->file("image")->getClientOriginalName() . "-" . time() . $request->file("image")->getClientOriginalExtension();
-            $request->file("image")->move(public_path("/images/posts"), $imageName);
-        } else {
-            $imageName = $post->image;
-        }
+            $imageNames = [];
+            foreach ($request->file('image') as $image) {
+            $imageName = $image->getClientOriginalName() . "-" . time() . "." . $image->getClientOriginalExtension();
+            $image->move(public_path("/images/posts"), $imageName);
+            $imageNames[] = $imageName;
+            }
+            $imageNamesString = implode(',', $imageNames);
+    } else {
+        $imageNamesString = $post->image;
+    }
         $post->update([
             "title" => $request->title,
             "description" => $request->description,
-            "image" => $imageName
+            "image" => $imageNamesString
         ]);
         return redirect()->route("posts.index");
     }

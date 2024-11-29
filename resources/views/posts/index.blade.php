@@ -5,11 +5,19 @@
         <a href="{{ route('posts.create') }}" class="btn btn-secondary mb-5">add new post</a>
         <div class="d-flex flex-wrap">
             @forelse ($posts as $post)
-                <div class="card w-25 p-3 me-5">
-                    <img class="card-img-top h-75" src="/images/posts/{{ $post->image }}" alt="">
+                <div class="card w-25 p-3 me-5 mb-5">
+                    <div class="d-flex w-100">
+                        @if ($post->image)
+                            @foreach (explode(',', $post->image) as $image)
+                                <img src="/images/posts/{{ $image }}" alt="" class="img-fluid mb-2"
+                                    style="width:125px; height:120px;" />
+                            @endforeach
+                        @endif
+                    </div>
                     <h2 class="card-title">{{ $post->title }}</h2>
                     <p class="card-text">{{ $post->description }}</p>
-                    <a href="{{ route('posts.show', $post->id) }}" class="btn btn-secondary mb-2">read more about this post</a>
+                    <a href="{{ route('posts.show', $post->id) }}" class="btn btn-secondary mb-2">read more about this
+                        post</a>
                     <div class="d-flex justify-content-between">
                         <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-info px-4">edit post</a>
                         <form action="{{ route('posts.destroy', $post->id) }}" method="post" class="">

@@ -17,9 +17,14 @@
                     rows="3">{{ $post->description }}</textarea>
             </div>
             <div class="mb-3">
-                <input name="image" id="image" class="form-control" type="file" hidden>
-                <label for="image">
-                    <img src="/images/posts//{{ $post->image }}" alt="" class="form-control w-50">
+                <input name="image[]" id="image" class="form-control" type="file" hidden multiple>
+                <label for="image" class="d-flex w-25">
+                    @if ($post->image)
+                        @foreach (explode(',', $post->image) as $image)
+                            <img src="/images/posts//{{ $image }}" alt="" class="img-fluid mb-2 w-50"
+                                style="width:125px; height:120px;">
+                        @endforeach
+                    @endif
                 </label>
             </div>
             <input type="submit" value="send" class="btn btn-primary">
