@@ -5,26 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Policies\UserPolicy;
-
-
-class PostController extends Controller
+class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $posts = Post::all();
-        return view("posts.index", compact("posts"));
+        $this->authorize("manageUser" , User::class);
+        $users = User::all();
+        return view("users.index", compact("users"));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view("posts.create");
+        $this->authorize("manageUser" , User::class);
+        return view("users.create");
     }
 
     /**
@@ -34,9 +30,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $imageNamesString="";
-
-        if ($request->hasFile("image")) {
+/*         if ($request->hasFile("image")) {
             $imageNames = [];
             foreach ($request->file('image') as $image) {
             $imageName = $image->getClientOriginalName() . "-" . time() . "." . $image->getClientOriginalExtension();
@@ -44,62 +38,69 @@ class PostController extends Controller
             $imageNames[] = $imageName;
             }
             $imageNamesString = implode(',', $imageNames);
-    }
-        Post::create([
-            "title" => $request->title,
-            "description" => $request->description,
-            "image" => $imageNamesString
+    } */
+    $this->authorize("manageUser" , User::class);
+        User::create([
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => Hash::make($request->password),
+            "is_admin" => false,
+
         ]);
-        return redirect()->route("posts.index");
+        return redirect()->route("users.index");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(User $user)
     {
-        return view("posts.show", compact("post"));
-    }
+/*         return view("users.show", compact("user"));
+ */    }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit(User $user)
     {
-        return view("posts.edit", compact("post"));
+        $this->authorize("manageUser" , User::class);
+        return view("users.edit", compact("user"));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, User $user)
     {
-        if ($request->hasFile("image")) {
+/*         if ($request->hasFile("image")) {
             $imageNames = [];
             foreach ($request->file('image') as $image) {
             $imageName = $image->getClientOriginalName() . "-" . time() . "." . $image->getClientOriginalExtension();
-            $image->move(public_path("/images/posts"), $imageName);
+            $image->move(public_path("/images/users"), $imageName);
             $imageNames[] = $imageName;
             }
             $imageNamesString = implode(',', $imageNames);
     } else {
-        $imageNamesString = $post->image;
-    }
-        $post->update([
-            "title" => $request->title,
-            "description" => $request->description,
-            "image" => $imageNamesString
+        $imageNamesString = $user->image;
+    } */
+    $this->authorize("manageUser" , User::class);
+        $user->update([
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => Hash::make($request->password),
         ]);
-        return redirect()->route("posts.index");
+        return redirect()->route("users.index");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(User $user)
     {
         $this->authorize("manageUser" , User::class);
-        $post->delete();
-        return redirect()->route("posts.index");
+        $user->delete();
+        return redirect()->route("users.index");
     }
+
 }
+
